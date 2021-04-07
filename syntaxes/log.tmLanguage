@@ -254,6 +254,17 @@
 				<string>string.key, emphasis log.exception</string>
 			</dict>
 
+			<dict>
+				<key>begin</key>
+				<string>^Caused by\:*</string>
+
+				<key>end</key>
+				<string>$</string>
+
+				<key>name</key>
+				<string>invalid log.exception</string>
+			</dict>
+
 			<!-- Match Urls -->
 			<dict>
 				<key>match</key>

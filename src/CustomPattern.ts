@@ -14,6 +14,7 @@ class CustomPattern {
         this.foreground = foreground;
         this.background = background;
         this.regexes = this.createRegex(pattern);
+        
         this.decoration = vscode.window.createTextEditorDecorationType({
             backgroundColor: this.background,
             color: this.foreground,
@@ -37,6 +38,7 @@ class CustomPattern {
             } catch (err) {
                 vscode.window.showErrorMessage('Regex of custom log level is invalid. Error: ' + err);
             }
+            
         } else {
 
             // Log level consists only of "simple" characters -> build regex.

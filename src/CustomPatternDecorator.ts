@@ -16,6 +16,47 @@ class CustomPatternDecorator {
         this._cache = new Map<vscode.Uri, Map<CustomPattern, vscode.Range[]>>();
     }
 
+    private addMyPatterns() {
+        let pattern = new CustomPattern("\\s(ERROR|error|Error|err|ERR|FATAL|fatal|Fatal|FAILURE|fail|FAIL|SEVERE|Severe|severe)\\s", "red", "");
+        this._configPattern.push(pattern);
+        
+        pattern = new CustomPattern("\\s(WARNING|warning|WARN|Warn|warn)\\s", "orange", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern("\\s(INFORMATION|information|INFO|Info|info)\\s", "#00a4e6", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern("\\s(DEBUG|Debug|debug)\\s", "#02c59b", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern("\\s(TRACE|Trace|trace|TRC|trc|VERBOSE|verbose|VERB|verb)\\s", "#9bc63f", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern("de\.gfos\..*", "#dd0051", "");
+        this._configPattern.push(pattern);
+
+        // pattern = new CustomPattern("Caused by\:.*", "orange", "");
+        // this._configPattern.push(pattern);
+
+        pattern = new CustomPattern(".*Full.*starting$", "#cd29ff", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern("createStaticLogger for\:.*", "gray", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern("Cache .* initialisiert", "lime", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern("Tabellenstruktur ok", "lime", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern(" Deployed.*", "lime", "");
+        this._configPattern.push(pattern);
+
+        pattern = new CustomPattern("WildFly Full.*started in.*", "lime", "");
+        this._configPattern.push(pattern);
+    }
+
     public updateConfiguration(): void {
         const configPatterns = vscode.workspace.getConfiguration('logFileHighlighter').get(
             'customPatterns') as { pattern: string, foreground?: string, background?: string }[];
@@ -25,6 +66,8 @@ class CustomPatternDecorator {
         }
 
         this._configPattern = [];
+
+        this.addMyPatterns();
 
         for (const item of configPatterns) {
             // If we have a pattern and either a foreground or background color, then use the pattern

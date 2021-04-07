@@ -18,9 +18,11 @@ class CustomPatternController {
         vscode.workspace.onDidChangeConfiguration(() => {
             this.onDidChangeConfiguration();
         }, this, subscriptions);
+
         vscode.workspace.onDidChangeTextDocument((changedEvent) => {
             this.onDidChangeTextDocument(changedEvent);
         }, this, subscriptions);
+        
         vscode.window.onDidChangeVisibleTextEditors((editors) => {
             this.onDidChangeVisibleTextEditors(editors);
         }, this, subscriptions);
@@ -38,6 +40,7 @@ class CustomPatternController {
 
     private onDidChangeConfiguration(): void {
         this._decorator.updateConfiguration();
+
         const logEditors = vscode.window.visibleTextEditors.filter((editor) => {
             return editor.document.languageId === this.LOG_ID;
         });

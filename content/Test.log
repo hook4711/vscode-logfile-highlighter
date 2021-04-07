@@ -4,11 +4,13 @@ ERROR, FAIL, FAILURE
 WARN, WARNING
 INFO, INFORMATION
 DEBUG
+TRACE
 
 error:
 warning:
 debug:
 information:
+trace:
 
 [ERROR]
 [eror]
@@ -35,11 +37,18 @@ information:
 [de]
 [d]
 
+[TRACE]
+[trc]
+[tr]
+
 [VERBOSE]
 [verb]
 [vrb]
 [vb]
 [v]
+
+de.gfos.xtimeweb
+de.gfos.hg
 
 NLog
 ----
