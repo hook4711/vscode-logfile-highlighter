@@ -42,22 +42,17 @@
         }],
         "commands": [{
                 "command": "LogFileHighlighter.findWildflyStart",
-                "title": "findWildflyStart",
+                "title": "Naechsten Start des Wildfly suchen",
                 "category": "LogFileHighlighter"
             },
             {
                 "command": "LogFileHighlighter.findWildflyStarted",
-                "title": "findWildflyStarted",
-                "category": "LogFileHighlighter"
-            },
-            {
-                "command": "LogFileHighlighter.findWildflyNextStart",
-                "title": "findWildflyNextStart",
+                "title": "Naechsten Eintrag fuer erfolgreichen Start des Wildfly suchen",
                 "category": "LogFileHighlighter"
             },
             {
                 "command": "LogFileHighlighter.gotoLastError",
-                "title": "gotoLastError",
+                "title": "Letzen Fehler suchen",
                 "category": "LogFileHighlighter"
             }
         ],
