@@ -2,37 +2,8 @@
 
 import * as vscode from 'vscode';
 import { Range } from 'vscode';
-
-/**
- * Parsen der Zeilen im Log nach der uebergebenen Expression.
- * 
- * @param regex         Regular Expression, nach der gesucht werden soll
- * @param bFromAktPos   Soll von der aktuellen Position im Editor gesucht werden?
- */
-function parseLines(regex: RegExp): boolean {
-    if (vscode.window.activeTextEditor) {
-        // Anzahl Zeilen im Editor
-        let count = vscode.window.activeTextEditor.document.lineCount;
-        // Aktuelle Position im Editor
-        let start = vscode.window.activeTextEditor.selection.start.line + 1;
-
-        // Ab aktueller Position im Editor alle Zeilen durchlaufen und auf regex pruefen
-        for (let i = start; i < count; i++) {
-            if (regex.test(vscode.window.activeTextEditor.document.lineAt(i).text)) {
-                const position = vscode.window.activeTextEditor.selection.active;
-                var newPos = position.with(i, 0);
-                var newSel = new vscode.Selection(newPos, newPos);
-
-                vscode.window.activeTextEditor.selection = newSel;
-                vscode.window.activeTextEditor.revealRange(new Range(newPos, newPos), vscode.TextEditorRevealType.InCenter);
-
-                return true;
-            }
-        }
-    }	
-
-    return false;
-}
+import { REGEXSTART, REGEXSTARTED } from './const';
+import { LogfileParser } from './LogfileParser';
 
 /**
  * Eigene Kommandos definieren und bekannt machen.
@@ -45,13 +16,11 @@ function parseLines(regex: RegExp): boolean {
  * @param context Kontext, um die Befehle einfuegen zu koennen.
  */
 export function addUserCommands(context: vscode.ExtensionContext) {
-	let regExStart = new RegExp('^.*\[org\.jboss\.as\].*WildFly Full.*starting$');
-    let regExStarted = new RegExp('^.*WildFly Full.*started in.*$');
 
 	// Ersten Start ab aktueller Position finden
 	let findWildflyStart = vscode.commands.registerCommand('LogFileHighlighter.findWildflyStart', () => {
 		
-        if (!parseLines(regExStart)) {
+        if (!LogfileParser.parseLines(REGEXSTART)) {
             vscode.window.setStatusBarMessage("Kein weiterer Start im Log!");
         }
 		
@@ -62,7 +31,7 @@ export function addUserCommands(context: vscode.ExtensionContext) {
 	// Wildfly gestartet suchen
 	let findWildflyStarted = vscode.commands.registerCommand('LogFileHighlighter.findWildflyStarted', () => {
 		
-        if (!parseLines(regExStarted)) {
+        if (!LogfileParser.parseLines(REGEXSTARTED)) {
             vscode.window.setStatusBarMessage("Kein weiterer erfolgreicher Start im Log!");
         }
 

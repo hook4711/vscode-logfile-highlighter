@@ -7,6 +7,7 @@ import TimePeriodCalculator = require('./TimePeriodCalculator');
 import TimePeriodController = require('./TimePeriodController');
 import { Range } from 'vscode';
 import { addUserCommands as addUserCommands } from './CustomCommands';
+import { LogOutlineProvider } from './LogOutlineProvider';
 
 // this method is called when the extension is activated
 export function activate(context: vscode.ExtensionContext) {
@@ -24,6 +25,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Eigene Commands erzeugen
     addUserCommands(context);
+
+	const jsonOutlineProvider = new LogOutlineProvider(context);
+	vscode.window.registerTreeDataProvider('logOutline', jsonOutlineProvider);
+	vscode.commands.registerCommand('logOutline.refresh', () => jsonOutlineProvider.refresh());
+	vscode.commands.registerCommand('logOutline.refreshNode', offset => jsonOutlineProvider.refresh(offset));
 }
 
 // this method is called when your extension is deactivated
