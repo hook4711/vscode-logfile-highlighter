@@ -3,9 +3,6 @@
 import * as vscode from 'vscode';
 import { Range } from 'vscode';
 
-export const regExStart = new RegExp('^.*\[org\.jboss\.as\].*WildFly Full.*starting$');
-export const regExStarted = new RegExp('^.*WildFly Full.*started in.*$');
-
 export class LogfileParser {
 
     /**
