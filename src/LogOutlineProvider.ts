@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { TreeItem } from 'vscode';
+import { LogfileParser } from './LogfileParser';
 import { LogTreeItem } from './LogTreeItem';
 
 export class LogOutlineProvider implements vscode.TreeDataProvider<LogTreeItem> {
@@ -10,15 +11,13 @@ export class LogOutlineProvider implements vscode.TreeDataProvider<LogTreeItem> 
 	private editor: vscode.TextEditor;
 	private autoRefresh = true;
 
-    private root: LogTreeItem[];
+    private root: LogTreeItem;
 
 	constructor(private context: vscode.ExtensionContext) {
         console.log('constructor');
 
 		vscode.window.onDidChangeActiveTextEditor(() => this.onActiveEditorChanged());
 		vscode.workspace.onDidChangeTextDocument(e => this.onDocumentChanged(e));
-		
-        this.parseTree();
 		
         this.autoRefresh = vscode.workspace.getConfiguration('logFileHighlighter').get('autorefresh');
 		vscode.workspace.onDidChangeConfiguration(() => {
@@ -72,13 +71,10 @@ export class LogOutlineProvider implements vscode.TreeDataProvider<LogTreeItem> 
 	}
 
 	private parseTree(): void {
-        console.log('parseTree!');
-
 		this.editor = vscode.window.activeTextEditor;
 
         if (this.editor && this.editor.document) {
-			this.root = [];
-            this.root.push(new LogTreeItem('root', -1));
+			this.root = new LogfileParser().parseLogFile(this.editor);
 		}
 	}
 
@@ -86,12 +82,13 @@ export class LogOutlineProvider implements vscode.TreeDataProvider<LogTreeItem> 
 
 		if (parent) {
 			console.log('getChildren => ' + parent.toString());
+			return parent.children;
             
 			//return Promise.resolve(this.getChildrenOffsets(node));
 		} else {
             console.log('getChildren => nix');
             
-            return this.root;
+            return this.root.children;
 			//return Promise.resolve(this.tree ? this.getChildrenOffsets(this.tree) : []);
 		}
 
@@ -99,12 +96,13 @@ export class LogOutlineProvider implements vscode.TreeDataProvider<LogTreeItem> 
 	}
 
 	getTreeItem(element: LogTreeItem): LogTreeItem {
-        console.log(element.toString());
-		return new LogTreeItem("my first item", vscode.TreeItemCollapsibleState.Collapsed);
+		return element;
 	}
 
 	select(range: vscode.Range) {
-        console.log('select');
+		// Zeile markieren
 		this.editor.selection = new vscode.Selection(range.start, range.end);
+		// Zeile anzeigen (scroll to view)
+		this.editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
 	}
 }

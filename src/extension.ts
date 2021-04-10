@@ -26,10 +26,11 @@ export function activate(context: vscode.ExtensionContext) {
 	// Eigene Commands erzeugen
     addUserCommands(context);
 
-	const jsonOutlineProvider = new LogOutlineProvider(context);
-	vscode.window.registerTreeDataProvider('logOutline', jsonOutlineProvider);
-	vscode.commands.registerCommand('logOutline.refresh', () => jsonOutlineProvider.refresh());
-	vscode.commands.registerCommand('logOutline.refreshNode', offset => jsonOutlineProvider.refresh(offset));
+	const logOutlineProvider = new LogOutlineProvider(context);
+	vscode.window.registerTreeDataProvider('logOutline', logOutlineProvider);
+	vscode.commands.registerCommand('logOutline.refresh', () => logOutlineProvider.refresh());
+	vscode.commands.registerCommand('logOutline.refreshNode', offset => logOutlineProvider.refresh(offset));
+    vscode.commands.registerCommand('extension.openLogSelection', range => logOutlineProvider.select(range));
 }
 
 // this method is called when your extension is deactivated
