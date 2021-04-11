@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { TreeItem } from 'vscode';
 import { LogfileParser } from './LogfileParser';
 import { LogTreeItem } from './LogTreeItem';
 
@@ -89,15 +88,27 @@ export class LogOutlineProvider implements vscode.TreeDataProvider<LogTreeItem> 
         return undefined;
 	}
 
+	/**
+	 * Wird aufgerufen, wenn ein Element im Baum dargestellt werden soll.
+	 * 
+	 * @param element Element, das angezeigt werden soll
+	 * @returns 	  Liefer das gleiche Element zurueck.
+	 */
 	getTreeItem(element: LogTreeItem): LogTreeItem {
-		
+		// Wenn das Element untergeordnete Elemente hat => Text fuer die Anzeige aktualisieren
 		if (element.children.length > 0) {
 			element.updateLabel();
 		}
 
+		// Element wird zurueckgegeben
 		return element;
 	}
 
+	/**
+	 * Wird aufgerufen, wenn eine Node im Tree geklickt wird.
+	 * 
+	 * @param range Zeile im Log, zu dem das angeklickte Element im Tree gehoert.
+	 */
 	select(range: vscode.Range) {
 		// Zeile markieren
 		this.editor.selection = new vscode.Selection(range.start, range.end);

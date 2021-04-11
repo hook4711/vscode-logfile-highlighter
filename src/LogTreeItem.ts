@@ -1,19 +1,22 @@
+import { randomFill } from 'crypto';
 import * as vscode from 'vscode';
 import { TreeItem } from 'vscode';
 import { ItemType, REGEX_ISO_DATE, REGEX_LOCAL_DATE, REGEX_TIME } from './const';
 
 export class LogTreeItem extends TreeItem {
     public logText: string;
-    public line: number;
-    public type: ItemType;
+    public line   : number;
+    public type   : ItemType;
+
     readonly children: LogTreeItem[] = [];
 
     constructor(logText: string, line: number, type: ItemType = ItemType.Unknown, collapsibleState: vscode.TreeItemCollapsibleState = vscode.TreeItemCollapsibleState.Collapsed) {
-        super(LogTreeItem.createLabel(logText, type), collapsibleState);
+        super("unknown", collapsibleState);
     
         this.logText = logText;
-        this.line = line;
-        this.type = type;
+        this.line    = line;
+        this.type    = type;
+        this.label   = this.createLabel();
     }
 
     addChildItem(label: string, line: number = -1, type: ItemType = ItemType.Unknown, 
@@ -42,24 +45,24 @@ export class LogTreeItem extends TreeItem {
     }
 
     updateLabel(): void {
-        this.label = LogTreeItem.createLabel(this.logText, this.type, this.children.length);
+        this.label = this.createLabel();
     }
 
-    static createLabel(logText: string, type: ItemType, childCount: number = 0): string {
+    createLabel(): string {
         
-        let date: string = LogTreeItem.extractDateFromLogText(logText);
+        let date: string = this.extractDateFromLogText(this.logText);
 
-        switch (type) {
+        switch (this.type) {
             case ItemType.CommonRoot:
-                if (childCount > 0) {
-                    return `Allgemein (${childCount})`;
+                if (this.children.length > 0) {
+                    return `Allgemein (${this.children.length})`;
                 } else {    
                     return 'Allgemein';
                 }    
 
             case ItemType.ExceptionRoot:
-                if (childCount > 0) {
-                    return `Exceptions (${childCount})`;
+                if (this.children.length > 0) {
+                    return `Exceptions (${this.children.length})`;
                 } else {
                     return 'Exceptions';    
                 }    
@@ -77,24 +80,34 @@ export class LogTreeItem extends TreeItem {
                 return '[STOPPED WildFly] - ' + date;
                 
             case ItemType.Exception:
-                return '[EXCEPTION WildFly] - ' + date;
+                return '[EXCEPTION WildFly] - ' + date + ' -> ' + this.getExceptionFromLine();
 
             default:
                 return '[UNKNOWN] - ' + date;
         }
     }
 
-    static extractDateFromLogText(logText: string): string {
+    extractDateFromLogText(logText: string): string {
         if (REGEX_ISO_DATE.test(logText) && REGEX_TIME.test(logText)) {
             return logText.match(REGEX_ISO_DATE).groups[1];
         } else if(REGEX_LOCAL_DATE.test(logText) && REGEX_TIME.test(logText)) {
             return logText.match(REGEX_LOCAL_DATE).groups[1];
         }
 
-        return logText.slice(0, 19);       
+        return logText ? logText.slice(0, 19) : '';       
     }
 
-    public toString(): string {
+    getExceptionFromLine(): string {
+        let match = this.logText.match('.*:\\s(.*xception).*');
+
+        if (match && match.length > 0) {
+            return match[1];
+        }
+
+        return "<unknown>";
+    }
+
+    toString(): string {
         return `Label: ${this.label}, Line: ${this.line}, Type: ${this.type}, State: ${this.collapsibleState}`;
     }
 }

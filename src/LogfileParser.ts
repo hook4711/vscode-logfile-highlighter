@@ -9,6 +9,11 @@ export class LogfileParser {
 
     /**
      * Parsen der Zeilen im Log nach der uebergebenen Expression.
+     * Wird aus den Kommandos aufgerufen.
+     * 
+     * - Naechsten WildFly-Start suchen
+     * - Zum letzten Fehler springen
+     * - ...
      * 
      * @param regex         Regular Expression, nach der gesucht werden soll
      * @param bFromAktPos   Soll von der aktuellen Position im Editor gesucht werden?
@@ -38,6 +43,12 @@ export class LogfileParser {
         return false;
     }
 
+    /**
+     * Parsen des aktuellen Logfiles.
+     * 
+     * @param editor Editor mit dem Logfile, das geparst werden soll.
+     * @returns Root-Eintrag fuer den Tree.
+     */
     parseLogFile(editor: vscode.TextEditor): LogTreeItem {
         // Root-Node erzeugen
         let root = new LogTreeItem('root', 0, ItemType.Root);
