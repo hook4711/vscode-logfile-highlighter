@@ -81,21 +81,20 @@ export class LogOutlineProvider implements vscode.TreeDataProvider<LogTreeItem> 
 	getChildren(parent?: LogTreeItem): LogTreeItem[] {
 
 		if (parent) {
-			console.log('getChildren => ' + parent.toString());
 			return parent.children;
-            
-			//return Promise.resolve(this.getChildrenOffsets(node));
 		} else {
-            console.log('getChildren => nix');
-            
             return this.root.children;
-			//return Promise.resolve(this.tree ? this.getChildrenOffsets(this.tree) : []);
 		}
 
         return undefined;
 	}
 
 	getTreeItem(element: LogTreeItem): LogTreeItem {
+		
+		if (element.children.length > 0) {
+			element.updateLabel();
+		}
+
 		return element;
 	}
 

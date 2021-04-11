@@ -41,11 +41,29 @@ export class LogTreeItem extends TreeItem {
         };
     }
 
-    static createLabel(logText: string, type: ItemType): string {
+    updateLabel(): void {
+        this.label = LogTreeItem.createLabel(this.logText, this.type, this.children.length);
+    }
+
+    static createLabel(logText: string, type: ItemType, childCount: number = 0): string {
         
         let date: string = LogTreeItem.extractDateFromLogText(logText);
 
         switch (type) {
+            case ItemType.CommonRoot:
+                if (childCount > 0) {
+                    return `Allgemein (${childCount})`;
+                } else {    
+                    return 'Allgemein';
+                }    
+
+            case ItemType.ExceptionRoot:
+                if (childCount > 0) {
+                    return `Exceptions (${childCount})`;
+                } else {
+                    return 'Exceptions';    
+                }    
+
             case ItemType.Start:
                 return '[START WildFly] - ' + date;
         
