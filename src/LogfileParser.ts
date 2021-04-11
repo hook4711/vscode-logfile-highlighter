@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import { Range } from 'vscode';
-import { ItemType, REGEXSTART, REGEXSTARTED } from './const';
+import { ItemType, REGEX_DEPLOYED, REGEX_EXCEPTION, REGEX_START, REGEX_STARTED, STD_ERR } from './const';
 import { LogTreeItem } from './LogTreeItem';
 
 export class LogfileParser {
@@ -49,15 +49,23 @@ export class LogfileParser {
         // Aktuelle Node
         let aktStart: LogTreeItem = null;
 
+        // Exceptions
+        let exceptionNode: LogTreeItem = null;
+
         // Logdatei auf Start und Ende WildFly pruefen
         for (let i = 0; i < count; i++) {
 
-            if (REGEXSTART.test(vscode.window.activeTextEditor.document.lineAt(i).text)) {
+            let text = vscode.window.activeTextEditor.document.lineAt(i).text;
+            if (text.length > 0 && (text.includes('ERROR') || text.includes('SEVERE')) && !text.includes(STD_ERR)) {
+                console.log(vscode.window.activeTextEditor.document.lineAt(i).text);
+            }    
+
+            if (REGEX_START.test(vscode.window.activeTextEditor.document.lineAt(i).text)) {
             
                 aktStart = root.addChildItem(vscode.window.activeTextEditor.document.lineAt(i).text, i, ItemType.Start);
                 aktStart.addCommand(editor);
 
-            } else if (REGEXSTARTED.test(vscode.window.activeTextEditor.document.lineAt(i).text)) {
+            } else if (REGEX_STARTED.test(vscode.window.activeTextEditor.document.lineAt(i).text)) {
             
                 if (!aktStart) {
                     aktStart = root.addChildItem("--.--.---- --:--:-- [START]", -1, ItemType.Start);
@@ -65,6 +73,25 @@ export class LogfileParser {
                 
                 aktStart.addChildItem(vscode.window.activeTextEditor.document.lineAt(i).text, i, ItemType.Started, vscode.TreeItemCollapsibleState.None)
                         .addCommand(editor);
+
+            } else if (REGEX_DEPLOYED.test(vscode.window.activeTextEditor.document.lineAt(i).text)) {
+            
+                if (!aktStart) {
+                    aktStart = root.addChildItem("--.--.---- --:--:-- [START]", -1, ItemType.Start);
+                }
+                
+                aktStart.addChildItem(vscode.window.activeTextEditor.document.lineAt(i).text, i, ItemType.Deployed, vscode.TreeItemCollapsibleState.None)
+                        .addCommand(editor);
+
+            } else if (REGEX_EXCEPTION.test(vscode.window.activeTextEditor.document.lineAt(i).text) && !text.includes(STD_ERR)) {
+            
+                if (!exceptionNode) {
+                    exceptionNode = root.addChildItem("Exceptions", -1, ItemType.Exception);
+                }
+                
+                exceptionNode.addChildItem(vscode.window.activeTextEditor.document.lineAt(i).text, i, ItemType.Exception, vscode.TreeItemCollapsibleState.None)
+                        .addCommand(editor);
+
             }
         }
 

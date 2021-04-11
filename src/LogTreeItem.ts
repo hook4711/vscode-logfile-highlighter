@@ -50,7 +50,7 @@ export class LogTreeItem extends TreeItem {
                 return '[START WildFly] - ' + date;
         
             case ItemType.Started:
-                return ' [STARTED WildFly] - ' + date;
+                return '[STARTED WildFly] - ' + date;
 
             case ItemType.Deployed:
                 return '[DEPLOYED WildFly] - ' + date;

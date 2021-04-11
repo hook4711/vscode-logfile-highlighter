@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import { Range } from 'vscode';
-import { REGEXSTART, REGEXSTARTED } from './const';
+import { REGEX_START, REGEX_STARTED } from './const';
 import { LogfileParser } from './LogfileParser';
 
 /**
@@ -20,7 +20,7 @@ export function addUserCommands(context: vscode.ExtensionContext) {
 	// Ersten Start ab aktueller Position finden
 	let findWildflyStart = vscode.commands.registerCommand('LogFileHighlighter.findWildflyStart', () => {
 		
-        if (!LogfileParser.parseLines(REGEXSTART)) {
+        if (!LogfileParser.parseLines(REGEX_START)) {
             vscode.window.setStatusBarMessage("Kein weiterer Start im Log!");
         }
 		
@@ -31,7 +31,7 @@ export function addUserCommands(context: vscode.ExtensionContext) {
 	// Wildfly gestartet suchen
 	let findWildflyStarted = vscode.commands.registerCommand('LogFileHighlighter.findWildflyStarted', () => {
 		
-        if (!LogfileParser.parseLines(REGEXSTARTED)) {
+        if (!LogfileParser.parseLines(REGEX_STARTED)) {
             vscode.window.setStatusBarMessage("Kein weiterer erfolgreicher Start im Log!");
         }
 
